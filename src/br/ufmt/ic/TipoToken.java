@@ -15,7 +15,8 @@ public enum TipoToken {
     Integer("integer"),
     OperadorRelacional("OperadorRelacional"),
     NumeroInteiro("Numero Inteiro"),
-    NumeroFloat("Numero Float");
+    NumeroFloat("Numero Float"),
+    Error("");
 
 
 

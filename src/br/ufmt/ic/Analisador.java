@@ -42,7 +42,6 @@ public class Analisador {
                     posicaoAtual++;
                     break;
                 }
-
                 if (catual == '<' && cprox == '=') {
                     AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
                     AdicionaMenorIgual();
@@ -99,7 +98,8 @@ public class Analisador {
                     break;
                 }
                 if (catual == '}') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
+                        AnalisarPalavra(peex);
+                    //Analisa a palavra adiciona até o parenteses atual
                     AdicionaFechaChaves();
                     peex.novoPeex();
                     posicaoAtual++;
@@ -140,8 +140,6 @@ public class Analisador {
                     posicaoAtual++;
                     break;
                 }
-
-
                 if ((catual == '*' && cprox != '/') && (catual == '*' && canterior != '/')) {
                     AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
                     AdicionaOperadorMultiplicacao();
@@ -164,16 +162,8 @@ public class Analisador {
                 //analisarcodigo(catual, cprox);
                 posicaoAtual++;
             } while (posicaoAtual < ValorMaximo);
-            if (peex.palavra.equals("int ") || peex.palavra.equals("int"))
-                analisarInt(peex, Codigo, catual, cprox);
-            if (peex.palavra.equals("if ")) {
-                analisarIF(peex);
-            } else {
-                AnalisarPalavra(peex);
-            }
+
             peex.novoPeex();
-
-
         }
         System.out.println("Codigo completo : " + peex.palavra);
         System.out.println("Tipo de Token | Valor");
@@ -258,7 +248,35 @@ public class Analisador {
                     } else if (analisarnumeroFloat(peex)) {
                         adicionaNumeroFloat(peex);
                     } else {
-                        adicionarIdentificador(peex);
+                        String alfabetoError = "0123456789!@#$%&;,./[]^~:|";
+                        String simbolosError = "!@#$%&;,./[]^~:|";
+                        boolean error = true;
+                        for (int i = 0; i < 26; i++) {
+                            if (peex.palavra.charAt(0) == alfabetoError.charAt(i)) {
+                                error = true;
+                                break;
+                            } else {
+                                error = false;
+                            }
+                        }
+                        if (error) {
+                            adicionaError(peex);
+                        } else {
+                            for (int x = 0; x < peex.palavra.length(); x++) {
+                                for (int y = 0; y < 16; y++) {
+                                    if (peex.palavra.charAt(x) == simbolosError.charAt(y)) {
+                                        error = true;
+                                        break;
+                                    } else {
+                                        error = false;
+                                    }
+                                }
+                            }
+                            if (error)
+                                adicionaError(peex);
+                            else
+                                adicionarIdentificador(peex);
+                        }
                     }
                 }
             }
@@ -287,6 +305,12 @@ public class Analisador {
         Token Identificador;
         Identificador = new Token(peex.palavra, TipoToken.Identificadores);
         token.add(Identificador);
+    }
+
+    public void adicionaError(Peex peex) {
+        Token Error;
+        Error = new Token(peex.palavra, TipoToken.Error);
+        token.add(Error);
     }
 
     public void AdicionaMaiorIgual() {
@@ -373,14 +397,6 @@ public class Analisador {
         token.add(palavrareservadaIF);
     }
 
-    public void analisarcodigo(char catual, char cprox) {
-        //verifica se possui comentário no peex atual
-        analisarComentario(peex, Codigo, catual, cprox);
-        //Verifica se o Peex é do tipo int
-        analisarInt(peex, Codigo, catual, cprox);
-
-    }
-
     public void analisarComentariobarra(Peex peex) {
         String comentario = "";
         posicaoAtual++;
@@ -392,7 +408,7 @@ public class Analisador {
                 break;
             comentario += catual;
             posicaoAtual++;
-        } while (((catual != '\n')));
+        } while ((catual != '\n'));
         posicaoAtual++;
         peex.novoPeex();
         //Adicionando o token de comentário na lista
@@ -438,40 +454,5 @@ public class Analisador {
                 this.posicaoAtual++;
             } while (catual != ' ');
         }
-    }
-
-    public void AddIdentificador(Peex peex, String codigo, char catual, char cprox) {
-        do {
-            peex.palavra += catual;
-            this.posicaoAtual++;
-            catual = codigo.charAt(this.posicaoAtual);
-        } while (catual != ' ');
-        this.posicaoAtual++;
-        catual = codigo.charAt(this.posicaoAtual);
-        cprox = codigo.charAt(this.posicaoAtual + 1);
-        Token identificador;
-        identificador = new Token(peex.palavra, TipoToken.Identificadores);
-        token.add(identificador);
-        peex.novoPeex();
-        analisarComentario(peex, Codigo, catual, cprox);
-        AddIgual(peex, codigo, catual);
-    }
-
-    public void AddIgual(Peex peex, String codigo, char catual) {
-        do {
-            this.posicaoAtual++;
-            catual = codigo.charAt(this.posicaoAtual);
-            if (catual != ' ' || catual != '=')
-                System.out.println("Esperava um =");
-            break;
-        } while (catual == ' ');
-        if (catual == '=') {
-            peex.palavra = "=";
-            Token OperadordeAtribuicao;
-            OperadordeAtribuicao = new Token(peex.palavra, TipoToken.Identificadores);
-            token.add(OperadordeAtribuicao);
-            peex.novoPeex();
-        }
-
     }
 }
