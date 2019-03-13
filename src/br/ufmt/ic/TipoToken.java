@@ -16,13 +16,15 @@ public enum TipoToken {
     OperadorRelacional("OperadorRelacional"),
     NumeroInteiro("Numero Inteiro"),
     NumeroFloat("Numero Float"),
-    Error("");
+    Error(""),
+    Final("$");
 
 
 
     private String token;
 
     TipoToken(String token){
+
         this.token= token;
     }
 }

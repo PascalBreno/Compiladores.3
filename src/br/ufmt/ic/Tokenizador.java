@@ -2,20 +2,23 @@ package br.ufmt.ic;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.lang.*;
+import javax.swing.*;
 
-public class Analisador {
+
+public class Tokenizador extends JFrame {
 
     private String Codigo;
     private int posicaoAtual = 0;
     private Peex peex = new Peex();
-    private List<Token> token = new ArrayList<Token>();
+    public List<Token> token = new ArrayList<Token>();
     private int ValorMaximo = 0;
 
-    public Analisador(String codigo) {
+    public Tokenizador(String codigo) {
         this.Codigo = codigo;
-    }
+    }  // Iniciar o Tokenizador aderindo o código lido.
 
-    public void IniciarAnalise() {
+    public void CriarTokens() {
         char catual, cprox = ' ', canterior;
         peex.novoPeex();
         this.ValorMaximo = Codigo.length() - 1;
@@ -43,106 +46,107 @@ public class Analisador {
                     break;
                 }
                 if (catual == '<' && cprox == '=') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaMenorIgual();
+                    AnalisarPalavra(peex);
+                    AdicionarToken("<=", TipoToken.OperadorRelacional); //Analisa a palavra adiciona até o parenteses atual
                     peex.novoPeex();
                     posicaoAtual = posicaoAtual + 2;
                     break;
                 }
                 if (catual == '\n') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
+                    AnalisarPalavra(peex);    //Analiza a palavra lida até o simbolo de pular Linha
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '=' && cprox == '=') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaigualIgual();
+                    AnalisarPalavra(peex);
+                    AdicionarToken("==", TipoToken.OperadorRelacional);
                     peex.novoPeex();
                     posicaoAtual = posicaoAtual + 2;
                     break;
                 }
                 if (catual == '!' && cprox == '=') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaDiferente();
+                    AnalisarPalavra(peex);
+                    AdicionarToken("!=", TipoToken.OperadorRelacional);
                     peex.novoPeex();
                     posicaoAtual = posicaoAtual + 2;
                     break;
                 }
                 if (catual == '>' && cprox == '=') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaMaiorIgual();
+                    AnalisarPalavra(peex);
+                    AdicionarToken(">=", TipoToken.OperadorRelacional);
                     peex.novoPeex();
                     posicaoAtual = posicaoAtual + 2;
                     break;
                 }
                 if (catual == '(') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaAbrePartenteses();
+                    AnalisarPalavra(peex);
+                    AdicionarToken("(", TipoToken.AbreParenteses);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == ')') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaFechaPartenteses();
+                    AnalisarPalavra(peex);
+                    AdicionarToken(")", TipoToken.FechaParentese);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '{') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaAbreChaves();
+                    AnalisarPalavra(peex);
+                    AdicionarToken("{", TipoToken.AbreChaves);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '}') {
-                        AnalisarPalavra(peex);
-                    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaFechaChaves();
+                    AnalisarPalavra(peex);
+
+                    AdicionarToken("}", TipoToken.FechaChaves);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '<') {
-                    AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaMenor();
+                    AnalisarPalavra(peex);
+                    AdicionarToken("<", TipoToken.OperadorRelacional);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '>') {
                     AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaMaior();
+                    AdicionarToken(">", TipoToken.OperadorRelacional);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '+') {
                     AnalisarPalavra(peex);
-                    AdicionaMais(); //Analisa a palavra adiciona até o parenteses atual
+                    AdicionarToken("+", TipoToken.OperadorAritmeticoMais);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '-') {
                     AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaMenos();
+                    AdicionarToken("-", TipoToken.OperadorAritmeticoMenos);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if (catual == '=') {
                     AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaAtribuicao();
+                    AdicionarToken("=", TipoToken.OperadordeAtribuicao);
+
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
                 }
                 if ((catual == '*' && cprox != '/') && (catual == '*' && canterior != '/')) {
                     AnalisarPalavra(peex);    //Analisa a palavra adiciona até o parenteses atual
-                    AdicionaOperadorMultiplicacao();
+                    AdicionarToken("*", TipoToken.Multiplicação);
                     peex.novoPeex();
                     posicaoAtual++;
                     break;
@@ -162,13 +166,7 @@ public class Analisador {
                 //analisarcodigo(catual, cprox);
                 posicaoAtual++;
             } while (posicaoAtual < ValorMaximo);
-
             peex.novoPeex();
-        }
-        System.out.println("Codigo completo : " + peex.palavra);
-        System.out.println("Tipo de Token | Valor");
-        for (int i = 0; i < token.size(); i++) {
-            System.out.println(token.get(i).tipoToken + "---->" + token.get(i).cod);
         }
     }
 
@@ -178,7 +176,7 @@ public class Analisador {
         boolean numero = false;
         String numeros = "0123456789";
         char numeroAtual = '0';
-        char charAtual = peex.palavra.charAt(0);
+        char charAtual;
         do {
             for (int x = 0; x < 10; x++) {
                 numeroAtual = numeros.charAt(x);
@@ -244,9 +242,9 @@ public class Analisador {
                 }
                 if (!(peex.palavra.equals(" ")) && !(peex.palavra.equals("\n"))) {
                     if (analisarnumero(peex)) {
-                        adicionaNumeroInteiro(peex);
+                        AdicionarToken(peex.palavra, TipoToken.NumeroInteiro);
                     } else if (analisarnumeroFloat(peex)) {
-                        adicionaNumeroFloat(peex);
+                        AdicionarToken(peex.palavra, TipoToken.NumeroFloat);
                     } else {
                         String alfabetoError = "0123456789!@#$%&;,./[]^~:|";
                         String simbolosError = "!@#$%&;,./[]^~:|";
@@ -260,7 +258,7 @@ public class Analisador {
                             }
                         }
                         if (error) {
-                            adicionaError(peex);
+                            AdicionarToken("Error", TipoToken.Error);
                         } else {
                             for (int x = 0; x < peex.palavra.length(); x++) {
                                 for (int y = 0; y < 16; y++) {
@@ -273,9 +271,9 @@ public class Analisador {
                                 }
                             }
                             if (error)
-                                adicionaError(peex);
+                                AdicionarToken("Error", TipoToken.Error);
                             else
-                                adicionarIdentificador(peex);
+                                AdicionarToken(peex.palavra, TipoToken.Identificadores);
                         }
                     }
                 }
@@ -283,112 +281,10 @@ public class Analisador {
         }
     }
 
-    public void adicionaNumeroInteiro(Peex peex) {
-        Token Inteiro;
-        Inteiro = new Token(peex.palavra, TipoToken.NumeroInteiro);
-        token.add(Inteiro);
-    }
-
-    public void adicionaNumeroFloat(Peex peex) {
-        Token Float;
-        Float = new Token(peex.palavra, TipoToken.NumeroFloat);
-        token.add(Float);
-    }
-
-    public void AdicionaMenorIgual() {
-        Token MenorIgual;
-        MenorIgual = new Token("<=", TipoToken.OperadorRelacional);
-        token.add(MenorIgual);
-    }
-
-    public void adicionarIdentificador(Peex peex) {
-        Token Identificador;
-        Identificador = new Token(peex.palavra, TipoToken.Identificadores);
-        token.add(Identificador);
-    }
-
-    public void adicionaError(Peex peex) {
-        Token Error;
-        Error = new Token(peex.palavra, TipoToken.Error);
-        token.add(Error);
-    }
-
-    public void AdicionaMaiorIgual() {
-        Token MaiorIgual;
-        MaiorIgual = new Token(">=", TipoToken.OperadorRelacional);
-        token.add(MaiorIgual);
-    }
-
-    public void AdicionaDiferente() {
-        Token Diferente;
-        Diferente = new Token("!=", TipoToken.OperadorRelacional);
-        token.add(Diferente);
-    }
-
-    public void AdicionaigualIgual() {
-        Token IgualIgual;
-        IgualIgual = new Token("==", TipoToken.OperadorRelacional);
-        token.add(IgualIgual);
-    }
-
-    public void AdicionaAtribuicao() {
-        Token Atribuicao;
-        Atribuicao = new Token("=", TipoToken.OperadordeAtribuicao);
-        token.add(Atribuicao);
-    }
-
-    public void AdicionaMais() {
-        Token Mais;
-        Mais = new Token("+", TipoToken.OperadorAritmeticoMais);
-        token.add(Mais);
-    }
-
-    public void AdicionaMenos() {
-        Token Menos;
-        Menos = new Token("+", TipoToken.OperadorAritmeticoMenos);
-        token.add(Menos);
-    }
-
-    public void AdicionaOperadorMultiplicacao() {
-        Token Multiplicacao;
-        Multiplicacao = new Token("*", TipoToken.Multiplicação);
-        token.add(Multiplicacao);
-    }
-
-    public void AdicionaMaior() {
-        Token Maior;
-        Maior = new Token(">", TipoToken.OperadorRelacional);
-        token.add(Maior);
-    }
-
-    public void AdicionaMenor() {
-        Token Menor;
-        Menor = new Token("<", TipoToken.OperadorRelacional);
-        token.add(Menor);
-    }
-
-    public void AdicionaAbrePartenteses() {
-        Token AbreParenteses;
-        AbreParenteses = new Token("(", TipoToken.AbreParenteses);
-        token.add(AbreParenteses);
-    }
-
-    public void AdicionaFechaPartenteses() {
-        Token FechaParenteses;
-        FechaParenteses = new Token(")", TipoToken.FechaParentese);
-        token.add(FechaParenteses);
-    }
-
-    public void AdicionaAbreChaves() {
-        Token AbreChaves;
-        AbreChaves = new Token("{", TipoToken.AbreChaves);
-        token.add(AbreChaves);
-    }
-
-    public void AdicionaFechaChaves() {
-        Token FechaChaves;
-        FechaChaves = new Token("}", TipoToken.FechaChaves);
-        token.add(FechaChaves);
+    public void AdicionarToken(String string_Token, TipoToken tipoToken) {
+        Token newtoken;
+        newtoken = new Token(string_Token, tipoToken);
+        token.add(newtoken);
     }
 
     public void analisarIF(Peex peex) {
