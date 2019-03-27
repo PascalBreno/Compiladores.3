@@ -6,7 +6,6 @@ import javax.swing.*;
 
 public class Main {
     public static void main(String[] args) {
-
         String nome = JOptionPane.showInputDialog("Digite o nome do arquivo.: ");
         System.out.println("Olá, seja bem vindo ao compilador do pascalzinho!");
         try {
