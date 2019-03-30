@@ -21,8 +21,8 @@ public class Main {
             }
             AnaliseAscendente codigo = new AnaliseAscendente(cod);
             codigo.CriarTokens();
-            codigo.tabela();
             codigo.ImprimirTokens();
+            codigo.tabela();
             arq.close();
         } catch (IOException e) {
             System.err.printf("Erro na abertura do arquivo: %s.\n",

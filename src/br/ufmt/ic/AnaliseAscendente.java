@@ -1,14 +1,12 @@
 package br.ufmt.ic;
 
-import javax.swing.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class AnaliseAscendente extends Tokenizador {
     public List<String> Simbolos = new ArrayList<String>();         //Essa é a pilha de que será inicializada
     public List<Integer> Estados = new ArrayList<Integer>();
-    public Integer Estado = 0;
-    public Integer Passo=1;
+    public Integer Passo = 1;
     int tokenActual = 0;
 
     public AnaliseAscendente(String codigo) {
@@ -19,35 +17,15 @@ public class AnaliseAscendente extends Tokenizador {
         Token newtoken;
         newtoken = new Token("$", TipoToken.Final);
         token.add(newtoken);
-        System.out.println("Tabela:");
         Estados.add(0);
-
         Goto(Estados.get(Estados.size() - 1), token.get(tokenActual)); //Irei avaliar o estado e o tipo da entrada atual.
-
-
-        //String codigo = "";
-        //Tabela tabela = new Tabela(codigo);
-
-//        for (int i = 0; i < token.size(); i++) {
-//            AnalisarCod_Tabela(tabela, i, codigo);
-//        }
-//        System.out.println(codigo);
-        /*
-            L->En    {print(E.val); }
-        E->E1+T  {E.val = E1.val + Tval;}
-        E->T     {E.val = T.val;}
-        T->T1*F  {T.val=T1.valxF.val;}
-        T->F     {T.val=F.val;}
-        F->(E)   {F.val = E.val;}
-            F-> digit{F.val = digit.lexval;}
-        */
     }
 
     public void Goto(int Estado, Token token) {
         String Retorno = VerificarTabela(Estado, token);
-        if(Retorno.equals("acc")){
-            finalizar();
+        if (Retorno.equals("acc")) {
             imprimirPasso(Retorno);
+            System.out.println("ok");
         }
         if (Retorno.charAt(0) == 'S') {
             Simbolos.add(token.cod);
@@ -56,7 +34,8 @@ public class AnaliseAscendente extends Tokenizador {
             imprimirPasso(Retorno);
 
             Goto(Estados.get(Estados.size() - 1), this.token.get(tokenActual));
-        }if (Retorno.charAt(0) == 'R') {
+        }
+        if (Retorno.charAt(0) == 'R') {
 
             int tamReducao = TamanhoRed(Character.getNumericValue(Retorno.charAt(1)));
             do {
@@ -67,47 +46,44 @@ public class AnaliseAscendente extends Tokenizador {
             String charRed = regra(Character.getNumericValue(Retorno.charAt(1)));
             Simbolos.add(charRed);
             char SimboloActual = charRed.charAt(0);
-            AddEstadoRed(Estados.get(Estados.size()-1), SimboloActual);
+            AddEstadoRed(Estados.get(Estados.size() - 1), SimboloActual);
             imprimirPasso(Retorno);
 
             Goto(Estados.get(Estados.size() - 1), this.token.get(tokenActual));
-        } else if (Retorno.equals("error")){
+        } else if (Retorno.equals("error")) {
             System.out.println("Error");
         }
     }
 
-    public void imprimirPasso(String Retorno){
-        System.out.print(this.Passo);
-        System.out.print(" | Simbolos : ");
-        Integer simbolo= 0;
-        do{
+    public void imprimirPasso(String Retorno) {
+        System.out.print(this.Passo+" ");
+        System.out.print("| Simbolos : ");
+        Integer simbolo = 0;
+        do {
             System.out.print(Simbolos.get(simbolo));
             simbolo++;
-        }while(simbolo<Simbolos.size());
+        } while (simbolo < Simbolos.size());
         System.out.print(" |  Estados:  ");
-        Integer estado= 0;
-        do{
+        Integer estado = 0;
+        do {
             System.out.print(Estados.get(estado));
             estado++;
-        }while(estado<Estados.size());
+        } while (estado < Estados.size());
         System.out.print("  | Entrada : ");
         Integer entrada = this.tokenActual;
-        do{
+        do {
             System.out.print(token.get(entrada).cod);
             entrada++;
-        }while(entrada<token.size());
-        System.out.print(" |  Ação  | "+ Retorno);
+        } while (entrada < token.size());
+        System.out.print(" |  Ação " + Retorno);
         System.out.print("\n");
         this.Passo++;
     }
 
-    public void finalizar(){
-        System.out.println("ok");
-    }
-    public void AddEstadoRed(Integer estado, char CharSimbo){
-        switch (estado){
+    public void AddEstadoRed(Integer estado, char CharSimbo) {
+        switch (estado) {
             case 0:
-                switch (CharSimbo){
+                switch (CharSimbo) {
                     case 'E':
                         Estados.add(1);
                         break;
@@ -120,7 +96,7 @@ public class AnaliseAscendente extends Tokenizador {
                 }
                 break;
             case 4:
-                switch (CharSimbo){
+                switch (CharSimbo) {
                     case 'E':
                         Estados.add(8);
                         break;
@@ -134,19 +110,19 @@ public class AnaliseAscendente extends Tokenizador {
                 break;
 
             case 6:
-                switch (CharSimbo){
+                switch (CharSimbo) {
 
-                case 'T':
-                    Estados.add(9);
-                    break;
-                case 'F':
-                    Estados.add(3);
-                    break;
-            }
+                    case 'T':
+                        Estados.add(9);
+                        break;
+                    case 'F':
+                        Estados.add(3);
+                        break;
+                }
                 break;
 
             case 7:
-                switch (CharSimbo){
+                switch (CharSimbo) {
                     case 'F':
                         Estados.add(10);
                         break;
@@ -194,49 +170,12 @@ public class AnaliseAscendente extends Tokenizador {
         return 0;
     }
 
-
-    public void ImprimirTabeladeEstados() {
-        String codigo = "";
-        for (int i = 0; i < Estados.size(); i++) {
-            codigo += "\n" + Estados.get(i);
-        }
-        System.out.println(codigo);
-    }
-
-    public void ImprimirTabeladeSimbolos() {
-        String codigo = "";
-        for (int i = 0; i < Simbolos.size(); i++) {
-            codigo += "\n" + Simbolos.get(i);
-        }
-        System.out.println(codigo);
-    }
-
     public void ImprimirTokens() {
         String codigo = "";
         for (int i = 0; i < token.size(); i++) {
             codigo += "\n\t" + token.get(i).tipoToken + "----> " + token.get(i).cod + "\n";
         }
-        JOptionPane.showMessageDialog(null, codigo, "Tokens", JOptionPane.INFORMATION_MESSAGE);
-    }
-
-    public void AnalisarSimbolo(String codigo, int i) {
-        if (codigo.charAt(0) == 'S') {
-            Simbolos.add(token.get(i).cod);
-            String palavra = "";
-            palavra += codigo.charAt(1);
-            Estados.add(Integer.parseInt(palavra));
-            ImprimirTabeladeSimbolos();
-            ImprimirTabeladeEstados();
-        } else if (codigo.charAt(0) == 'R') {
-
-            String palavra = "";
-            palavra += codigo.charAt(1);
-            this.Estado = Integer.parseInt(palavra);
-        } else {
-            System.out.println("Erro na operação.\nArgumento Inválido.");
-        }
-
-
+        System.out.println(codigo);
     }
 
     public String VerificarTabela(int Estado, Token token) {
